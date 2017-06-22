@@ -8,7 +8,13 @@ setup(
     name='tensoref',
     version=__version__,
     packages=['tensoref'],
-    install_requires=['docopt', 'tensorflow', 'nltk'],
+    install_requires=[
+        'docopt',
+        'tensorflow',
+        'nltk',
+        'xlrd',
+        'matplotlib'
+    ],
     classifiers=[
         "Programming Language :: Python :: 3.5",
         "Topic :: Scientific/Engineering :: Artificial Intelligence"

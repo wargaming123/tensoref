@@ -2,11 +2,8 @@
 Tensoref
 
 Usage:
-    tensoref <command> [options]
+    tensoref fire-theft (--linear|--polynomial) [options]
     tensoref --help
-
-Commands:
-    say-hello                       Says hello
 
 Options:
     -v, --verbose                   Verbose mode
@@ -22,7 +19,9 @@ from docopt import docopt
 from tensoref.config import CONFIG
 from tensoref import __version__
 
-# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # avoid tensorflow warnings
+import tensoref.problems.fire_theft as fire_theft
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # avoid tensorflow warnings
 
 
 def main():
@@ -46,11 +45,18 @@ def main():
         if args['--logging-level'] == 'error':
             CONFIG.set('logging', 'level', '40')
 
+    # start logging
     _start_logging()
-    logging.debug("Tensoref" + str(args['<command>']) + " started.")
+    logging.debug("Tensoref started.")
 
-    if args['<command>'] == 'say-hello':
-        print("hello")
+    # execute command
+    if args['fire-theft']:
+        if args['--linear']:
+            fire_theft.run_linear()
+        elif args['--polynomial']:
+            fire_theft.run_polynomial()
+        else:
+            print('Please specify --linear or --polynomial')
     else:
         # --- default ---
         print('Please specify a valid command.')
@@ -69,7 +75,7 @@ def _start_logging():
         logging.basicConfig(
             filename=os.path.dirname(os.path.realpath(__file__)) + '/' + CONFIG.get('logging', 'file'),
             level=CONFIG.getint('logging', 'level'),
-            format='%(asctime)s [%(threadName)-12.12s] [%(levelname)s] %(message)s'
+            format='%(asctime)s [%(levelname)s] %(message)s'
         )
         # add output handler
         root_logger = logging.getLogger()
