@@ -13,43 +13,52 @@ class LinearRegression:
         :param x: tf.placeholder
         :param y: tf.placeholder
         """
-        self._prediction = None
-        self._loss = None
-        self._optimizer = None
-        self.w = None
-        self.b = None
         self.x = x
         self.y = y
-        pass
+        self.w = None
+        self.b = None
+        self.prediction = self.create_prediction()
+        self.loss = self.create_loss()
+        self.optimizer = self.create_optimizer()
+        self.summary = self.create_summary()
 
-    def prediction(self):
+    def create_prediction(self):
         """
         Create the prediction with variables [w] and [b] so that computes [Y = wX + b]
 
         :return: prediction
         """
-        if self._prediction is None:
+        with tf.name_scope('prediction'):
             self.w = tf.Variable(0.0, name='weight_1')
             self.b = tf.Variable(0.0, name='bias')
-            self._prediction = tf.multiply(self.w, self.x) + self.b
-        return self._prediction
+            return tf.multiply(self.w, self.x) + self.b
 
-    def loss(self):
+    def create_loss(self):
         """
         Create an operation that calculates loss
 
         :return: loss
         """
-        if self._loss is None:
-            self._loss = tf.square(self.prediction() - self.y, name='loss')
-        return self._loss
+        with tf.name_scope('loss'):
+            return tf.square(self.prediction - self.y)
 
-    def optimizer(self):
+    def create_optimizer(self):
         """
         Create an optimizer with an operation that minimizes loss
 
+        We could use also tf.train.GradientDescentOptimizer
+
         :return: optimizer
         """
-        if self._optimizer is None:
-            self._optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(self.loss())
-        return self._optimizer
+        return tf.train.AdamOptimizer(learning_rate=0.001).minimize(self.loss)
+
+    def create_summary(self):
+        """
+        Create a summary to visualize with Tensorboard
+
+        :return:
+        """
+        with tf.name_scope('summaries'):
+            tf.summary.scalar('loss', self.loss)
+            tf.summary.histogram('histogram_loss', self.loss)
+            return tf.summary.merge_all()

@@ -3,6 +3,7 @@ Tensoref
 
 Usage:
     tensoref fire-theft (--linear|--polynomial) [options]
+    tensoref style-transfer <content> <style> <width> <height>
     tensoref --help
 
 Options:
@@ -20,6 +21,7 @@ from tensoref.config import CONFIG
 from tensoref import __version__
 
 import tensoref.problems.fire_theft as fire_theft
+import tensoref.problems.style_transfer as style_transfer
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # avoid tensorflow warnings
 
@@ -57,6 +59,8 @@ def main():
             fire_theft.run_polynomial()
         else:
             print('Please specify --linear or --polynomial')
+    elif args['style-transfer']:
+        style_transfer.run(args['<content>'], args['<style>'], args['<width>'], args['<height>'])
     else:
         # --- default ---
         print('Please specify a valid command.')
